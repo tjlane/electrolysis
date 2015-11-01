@@ -8,6 +8,9 @@ import numpy as np
 from scipy import ndimage
 
 
+_WARN = False
+
+
 def blob_align(images, init_peak_loc=None):
     """
     Align a series of images on the strongest peak.
@@ -130,7 +133,7 @@ def find_blobs(image, sigma_threshold=5.0, discard_border=1,
         
         
         if not (len(zx) == 2) or not (len(zy) == 2):
-            if not warning_printed:
+            if (not warning_printed) and _WARN:
                 print "WARNING: Peak algorithm confused about width of peak at", c
                 print "         Setting default peak width (5,5). This warning"
                 print "         will only be printed ONCE. Proceed w/caution!"
