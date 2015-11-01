@@ -16,8 +16,6 @@ def blob_align(images, init_peak_loc=None):
     very edges of the image.
     """
 
-    print images.shape
-
     # initial condition for peak placement
     if init_peak_loc is None:
         anchor_pos = np.array([images.shape[1], images.shape[2]]) / 2.0
@@ -40,14 +38,15 @@ def blob_align(images, init_peak_loc=None):
         pos = np.array(pos)
         diffs = pos - anchor_pos[None,:]
         new_pos = pos[ np.argmin(np.square(diffs).sum(1)) ] # L2 norm
-        print 'is:', new_pos - anchor_pos
 
         # shift image
-        images[i] = ndimage.interpolation.shift(images[i], anchor_pos - new_pos)
+        if i == 0:
+            anchor_pos = new_pos
+        else:
+            shift = anchor_pos - new_pos
+            print 'Shifting image %d by:'%i, shift
+            images[i] = ndimage.interpolation.shift(images[i], shift)
         
-        # reset
-        #prev_pos = new_pos
-
 
     return images
 
@@ -200,7 +199,7 @@ def draw_blobs(image, centers, widths):
     return
 
 
-def test_alignment():
+def _test_alignment():
 
     #from skimage import data
     #i0 = data.camera()
@@ -230,5 +229,5 @@ def test_alignment():
 
 
 if __name__ == "__main__":
-    test_alignment()
+    _test_alignment()
 
