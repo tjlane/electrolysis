@@ -7,6 +7,16 @@ import struct
 import numpy as np
 
 
+def load(filename, sequential_darks=False):
+    d = BerkeleyDat(filename).images.astype(np.float)
+    if sequential_darks:
+        dark = np.mean(d[0::2,:,:], axis=0)
+        images = d[1::2,:,:] - dark
+    else:
+        images = d
+    return images
+
+
 class BerkeleyDat(object):
     """
     Files contain 36 bytes of metadata followed by data from 32 images.
