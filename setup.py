@@ -14,5 +14,6 @@ except ImportError:
 
 
 setup(name='electrolysis',
-      packages=["electrolysis"],
-      package_dir={"electrolysis": "electrolysis"})
+      packages=["electrolysis", "electrolysis.inout"],
+      package_dir={"electrolysis": "electrolysis",
+                   "electrolysis.inout": "electrolysis/inout"})

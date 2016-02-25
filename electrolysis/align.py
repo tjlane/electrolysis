@@ -6,6 +6,7 @@ align.py
 
 import numpy as np
 from scipy import ndimage
+from matplotlib import pyplot as plt
 
 
 _WARN = False
