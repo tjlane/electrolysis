@@ -16,4 +16,6 @@ except ImportError:
 setup(name='electrolysis',
       packages=["electrolysis", "electrolysis.inout"],
       package_dir={"electrolysis": "electrolysis",
-                   "electrolysis.inout": "electrolysis/inout"})
+                   "electrolysis.inout": "electrolysis/inout"},
+      scripts=[s for s in glob('scripts/*') if not s.endswith('__.py')]
+      )
