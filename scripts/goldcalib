@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+
+import numpy as np
+from glob import glob
+from natsort import natsorted
+from scipy import ndimage
+
+from PIL import Image
+from electrolysis import align
+
+
+files = glob('./*.tif')
+
+for f in natsorted(files)[::1]:
+
+    # read the image file
+    #pitch = float(f.split('Pitch-')[-1].split('_')[0])
+    tif   = Image.open(f)
+    img   = np.fromstring(tif.tostring(), 'H').reshape(512,512)
+
+    # find the blobs
+    img = ndimage.filters.median_filter(img, 3)
+    centers, widths = align.find_blobs(img, discard_small_blobs=5,
+                         sigma_threshold=1.5, discard_border=50)
+
+    if len(centers) > 0:
+        align.draw_blobs(img, centers, widths)
+
+
+
+

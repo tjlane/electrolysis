@@ -1,0 +1,41 @@
+#!/usr/bin/env python
+
+import numpy as np
+from glob import glob
+from natsort import natsorted
+from scipy import ndimage
+
+from PIL import Image
+from electrolysis import align
+
+
+files = glob('./*.tif')
+
+CAMERA_CENT = (245.5,264.0)      # pixels
+CAMERA_SIZE = (512, 512)          # pixels
+
+
+# create a mask
+mask = np.ones(CAMERA_SIZE, dtype=np.int8)
+r = np.sqrt( np.sum( np.square( np.mgrid[0:CAMERA_SIZE[0],0:CAMERA_SIZE[1]] \
+        - np.array(CAMERA_CENT)[:,None,None] ), axis=0 ))
+mask[r < 25] = 0
+
+for f in natsorted(files)[::10]:
+
+    # read the image file
+    #pitch = float(f.split('Pitch-')[-1].split('_')[0])
+    tif   = Image.open(f)
+    img   = np.fromstring(tif.tostring(), 'H').reshape(512,512)
+
+    # find the blobs
+    img = ndimage.filters.median_filter(img, 3)
+    centers, widths = align.find_blobs(img * mask, discard_small_blobs=5,
+                         sigma_threshold=2.5, discard_border=50)
+
+    if len(centers) > 0:
+        align.draw_blobs(img * mask, centers, widths)
+
+
+
+
